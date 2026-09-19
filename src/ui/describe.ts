@@ -64,17 +64,3 @@ export function occupants(ctx: Ctx, interpreterId: string): string[] {
   }
   return names;
 }
-
-/** 调度日志用的状态切换文案 */
-export function transitionText(ctx: Ctx, channelName: string, o: ChannelOutcome): string {
-  if (o.status === 'ok') {
-    const how = o.route.relay ? `经${langName(ctx, o.route.relay)}中继` : '直译';
-    return `✓ ${channelName} 恢复收听（${how}）`;
-  }
-  if (o.status === 'blocked') {
-    const full = o.fullInterpreters.map((id) => interpreterName(ctx, id)).join('、');
-    return `⚠ ${channelName} 席位不足：${full} 已满载`;
-  }
-  const first = o.gaps[0];
-  return `✕ ${channelName} 中断：${first ? gapText(ctx, first) : '无可用路由'}`;
-}

@@ -720,3 +720,528 @@ button:focus-visible {
     overflow: visible;
   }
 }
+
+/* ---------- 交接演练控制台 ---------- */
+
+.console-panel {
+  margin: 12px 12px 0;
+  padding: 10px 14px;
+}
+
+.console-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.inject-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.tick-box {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  background: #0d131b;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  min-width: 172px;
+}
+
+.tick-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.tick-no {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  color: var(--info);
+}
+
+.run-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+}
+
+.run-dot.run {
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+  animation: pulse 1s infinite;
+}
+
+.run-dot.pause {
+  background: var(--warn);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.run-text {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.transport {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.speed-ctrl {
+  display: inline-flex;
+}
+
+.btn-seg {
+  border-radius: 0;
+  padding: 6px 10px;
+}
+
+.btn-seg:first-child {
+  border-radius: 7px 0 0 7px;
+}
+
+.btn-seg:last-child {
+  border-radius: 0 7px 7px 0;
+}
+
+.seg-on {
+  background: var(--info);
+  border-color: var(--info);
+  color: #06121f;
+  font-weight: 600;
+}
+
+.btn-warn {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.btn-fault {
+  border-color: #5a3340;
+}
+
+.btn-fault:hover:not(:disabled) {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.inject-ch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.inject-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.brand-dot.dot-run {
+  background: var(--ok);
+  animation: pulse 1s infinite;
+}
+
+/* ---------- 交接票据 ---------- */
+
+.ticket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ticket {
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  padding: 8px 10px;
+  font-size: 12.5px;
+}
+
+.ticket.phase-prepare {
+  border-left-color: var(--warn);
+}
+
+.ticket.phase-switch {
+  border-left-color: var(--info);
+}
+
+.ticket.phase-confirm {
+  border-left-color: var(--ok);
+}
+
+.ticket header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ticket footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.phase-chip {
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  white-space: nowrap;
+}
+
+.phase-chip.phase-prepare {
+  color: var(--warn);
+}
+
+.phase-chip.phase-switch {
+  color: var(--info);
+}
+
+.phase-chip.phase-confirm {
+  color: var(--ok);
+}
+
+.ticket-route {
+  color: var(--text);
+}
+
+.ticket-route .arrow {
+  color: var(--info);
+  margin: 0 4px;
+}
+
+.ticket-fail {
+  color: var(--bad);
+  font-style: normal;
+  margin-left: 8px;
+}
+
+.btn-mini {
+  padding: 3px 10px;
+  font-size: 12px;
+}
+
+.wait-note {
+  color: var(--muted);
+}
+
+/* ---------- 频道卡片上的交接状态 ---------- */
+
+.live-chip {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.live-chip.live-on {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.live-chip.live-mute {
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.ch-card .chip {
+  margin-left: 0;
+}
+
+.handover-banner {
+  margin-top: 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px dashed;
+}
+
+.badge-prepare {
+  color: var(--warn);
+  border-color: var(--warn);
+  background: rgba(210, 153, 34, 0.08);
+}
+
+.badge-switch {
+  color: var(--info);
+  border-color: var(--info);
+  background: rgba(88, 166, 255, 0.08);
+}
+
+.badge-confirm {
+  color: var(--ok);
+  border-color: var(--ok);
+  background: rgba(63, 185, 80, 0.08);
+}
+
+.ch-card.is-muted {
+  opacity: 0.92;
+}
+
+.live-route {
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.live-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #06121f;
+  background: var(--ok);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.live-seg {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+/* ---------- 图上的热备边 ---------- */
+
+.edge-standby .edge-line {
+  stroke: var(--warn);
+  stroke-width: 3;
+  stroke-dasharray: 9 5;
+  animation: dash-flow 1.2s linear infinite;
+}
+
+.arr-standby {
+  fill: var(--warn);
+}
+
+.edge-standby .edge-chip {
+  stroke: var(--warn);
+  stroke-dasharray: 4 3;
+}
+
+.edge-standby .edge-chip-seats {
+  fill: var(--warn);
+}
+
+@keyframes dash-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+.line-standby {
+  border-color: var(--warn);
+  border-top-style: dashed;
+}
+
+/* ---------- 交接轨迹 ---------- */
+
+.timeline-panel h2 {
+  margin-bottom: 8px;
+}
+
+.ribbons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.ribbon-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ribbon-name {
+  width: 64px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.ribbon {
+  display: flex;
+  gap: 2px;
+  flex: 1;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.seg {
+  position: relative;
+  min-width: 26px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.seg-live {
+  background: rgba(63, 185, 80, 0.22);
+  border: 1px solid var(--ok);
+  color: var(--ok);
+}
+
+.seg-mute {
+  background: rgba(248, 81, 73, 0.12);
+  border: 1px dashed var(--bad);
+  color: var(--bad);
+}
+
+.seg-current {
+  outline: 2px solid var(--info);
+  outline-offset: 1px;
+}
+
+.seg-switch-mark {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--info);
+  box-shadow: 0 0 5px var(--info);
+}
+
+.ribbon-phase {
+  width: 78px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ribbon-phase.phase-preparing {
+  color: var(--warn);
+}
+
+.ribbon-phase.phase-switching {
+  color: var(--info);
+}
+
+.ribbon-phase.phase-confirming {
+  color: var(--ok);
+}
+
+.ribbon-legend {
+  margin: 2px 0 0 72px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ticket-history {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ticket-history li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  background: var(--panel-2);
+}
+
+.hist-out.out-completed {
+  color: var(--ok);
+}
+
+.hist-out.out-reverted {
+  color: var(--bad);
+}
+
+.hist-out.out-abandoned {
+  color: var(--muted);
+}
+
+.hist-out.out-silenced {
+  color: var(--warn);
+}
+
+.hist-seg {
+  color: var(--muted);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+.trail-list {
+  max-height: 260px;
+}
+
+.phase-tag,
+.ch-tag {
+  font-size: 10.5px;
+  border-radius: 4px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tag-info {
+  color: var(--info);
+}
+
+.tag-prepare {
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.tag-switch {
+  color: var(--info);
+}
+
+.tag-confirm {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.ch-tag {
+  color: var(--text);
+}
+
+.trail-list time {
+  width: 34px;
+}

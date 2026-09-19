@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { Allocation } from '../engine/routing';
 import { compareChannels } from '../engine/routing';
+import { activeTickets, openSession, type HandoverState } from '../engine/handover';
 import type { Interpreter, Scenario } from '../types';
 import { statusLabel, type Ctx } from '../ui/describe';
 
@@ -9,6 +10,7 @@ interface Props {
   allocation: Allocation;
   selectedChannelId: string | null;
   onSelectChannel: (id: string | null) => void;
+  handover?: HandoverState;
 }
 
 const W = 720;
@@ -77,10 +79,28 @@ interface EdgeItem {
   ly: number;
 }
 
-export default function GraphView({ scenario, allocation, selectedChannelId, onSelectChannel }: Props) {
+export default function GraphView({ scenario, allocation, selectedChannelId, onSelectChannel, handover }: Props) {
   const ctx: Ctx = { scenario, allocation };
 
   const pos = useMemo(() => layoutNodes(scenario), [scenario]);
+
+  // 交接态：实际出声译员集合 与 热备译员集合
+  const { playingIds, standbyIds } = useMemo(() => {
+    const playing = new Set<string>();
+    const standby = new Set<string>();
+    if (handover) {
+      for (const ch of scenario.channels) {
+        const sess = openSession(handover, ch.id);
+        if (sess) sess.route.legs.forEach((l) => playing.add(l.interpreterId));
+      }
+      for (const t of activeTickets(handover)) {
+        if (t.phase === 'preparing' && t.toRoute) {
+          t.toRoute.legs.forEach((l) => standby.add(l.interpreterId));
+        }
+      }
+    }
+    return { playingIds: playing, standbyIds: standby };
+  }, [handover, scenario.channels]);
 
   // 同一对语种之间的多名译员画成平行曲线
   const edges = useMemo<EdgeItem[]>(() => {
@@ -128,7 +148,7 @@ export default function GraphView({ scenario, allocation, selectedChannelId, onS
         <pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse">
           <circle cx="1" cy="1" r="1" fill="#232d3a" />
         </pattern>
-        {(['idle', 'live', 'full', 'off', 'active'] as const).map((k) => (
+        {(['idle', 'live', 'full', 'off', 'active', 'standby'] as const).map((k) => (
           <marker
             key={k}
             id={`arr-${k}`}
@@ -150,12 +170,26 @@ export default function GraphView({ scenario, allocation, selectedChannelId, onS
         const load = allocation.loads.get(it.id) ?? 0;
         const full = it.online && load >= it.capacity;
         const inRoute = routeIds.has(it.id);
-        const state = !it.online ? 'off' : inRoute ? 'active' : full ? 'full' : load > 0 ? 'live' : 'idle';
-        const dim = hasSelection && !inRoute;
+        let state: 'idle' | 'live' | 'full' | 'off' | 'active' | 'standby';
+        if (!it.online) state = 'off';
+        else if (handover) {
+          if (playingIds.has(it.id)) state = 'active';
+          else if (standbyIds.has(it.id)) state = 'standby';
+          else if (inRoute) state = 'active';
+          else state = full ? 'full' : load > 0 ? 'live' : 'idle';
+        } else {
+          state = inRoute ? 'active' : full ? 'full' : load > 0 ? 'live' : 'idle';
+        }
+        const dim = hasSelection && !inRoute && !standbyIds.has(it.id) && !playingIds.has(it.id);
+        const isStandby = standbyIds.has(it.id);
         const line1 = it.name;
         const line2 = !it.online
           ? `✕ 离线 · 容量 ${it.capacity}`
-          : `${load}/${it.capacity} 席${full ? ' · ⚠ 满' : ''}`;
+          : isStandby
+            ? '◔ 热备中·边界接手'
+            : handover && playingIds.has(it.id)
+              ? `🔊 出声中 · ${load}/${it.capacity} 席`
+              : `${load}/${it.capacity} 席${full ? ' · ⚠ 满' : ''}`;
         const chipW = Math.max(estWidth(line1, 11), estWidth(line2, 11)) + 18;
         return (
           <g key={it.id} className={`edge edge-${state} ${dim ? 'edge-dim' : ''}`}>
@@ -201,7 +235,8 @@ export default function GraphView({ scenario, allocation, selectedChannelId, onS
               const o = allocation.byChannel.get(ch.id);
               if (!o) return null;
               const s = statusLabel(ctx, o);
-              const label = `${s.icon} ${ch.name}`;
+              const muted = handover ? !openSession(handover, ch.id) : false;
+              const label = muted ? `🔇 ${ch.name}` : `${s.icon} ${ch.name}`;
               const w = estWidth(label, 11) + 18;
               const y = p.y + 34 + idx * 26;
               const selected = selectedChannelId === ch.id;
