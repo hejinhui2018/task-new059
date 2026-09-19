@@ -720,3 +720,209 @@ button:focus-visible {
     overflow: visible;
   }
 }
+
+/* ---------- 交接演练台 ---------- */
+
+.drill-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.drill-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.seg-clock {
+  font-size: 13px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  background: var(--panel-2);
+  white-space: nowrap;
+}
+
+.seg-clock strong {
+  color: var(--info);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+.drill-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.drill-buttons .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.drill-progress {
+  margin: 0;
+  font-size: 12px;
+  color: var(--info);
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: var(--panel-2);
+}
+
+.fault-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+}
+
+.fault-label {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+.fault-btn {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.fault-btn.fault-off {
+  border-style: dashed;
+  color: var(--warn);
+}
+
+/* 每频道交接状态卡 */
+
+.ho-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ho-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+  padding: 8px 12px;
+}
+
+.ho-card.ho-active {
+  border-left: 4px solid var(--warn);
+}
+
+.ho-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ho-head .chip {
+  margin-left: auto;
+}
+
+.ho-line {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.ho-line.ho-plan {
+  color: var(--warn);
+}
+
+.ho-line.ho-stable {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ho-since {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.ho-confirm {
+  margin-top: 6px;
+  font-size: 12px;
+  padding: 4px 12px;
+}
+
+/* 交接事件轨迹 */
+
+.trace-box h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.trace-empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.trace-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.trace-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--panel-2);
+  border-left: 3px solid var(--border);
+}
+
+.trace-seg {
+  color: var(--muted);
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.trace-item.trace-switch { border-left-color: var(--warn); }
+.trace-item.trace-confirm { border-left-color: var(--ok); }
+.trace-item.trace-rollback,
+.trace-item.trace-rollback-plan { border-left-color: var(--bad); }
+.trace-item.trace-prepare { border-left-color: var(--info); }
+
+/* 频道卡片的在播行 */
+
+.live-line {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--info);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.live-since {
+  color: var(--muted);
+}
+
+.chip-mini {
+  font-size: 11px;
+  padding: 1px 8px;
+  margin-left: 0;
+}

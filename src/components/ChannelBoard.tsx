@@ -1,5 +1,6 @@
 import type { Allocation } from '../engine/routing';
 import { compareChannels } from '../engine/routing';
+import { activeHandover, type Session } from '../engine/handover';
 import type { Scenario } from '../types';
 import {
   gapText,
@@ -7,6 +8,8 @@ import {
   interpreterName,
   langName,
   occupants,
+  phaseLabel,
+  routeText,
   statusLabel,
   type Ctx,
 } from '../ui/describe';
@@ -14,6 +17,7 @@ import {
 interface Props {
   scenario: Scenario;
   allocation: Allocation;
+  session: Session;
   selectedChannelId: string | null;
   onSelect: (id: string | null) => void;
   onPriorityChange: (channelId: string, priority: number) => void;
@@ -25,7 +29,7 @@ function clampPriority(raw: string, fallback: number): number {
   return Math.min(99, Math.max(1, n));
 }
 
-export default function ChannelBoard({ scenario, allocation, selectedChannelId, onSelect, onPriorityChange }: Props) {
+export default function ChannelBoard({ scenario, allocation, session, selectedChannelId, onSelect, onPriorityChange }: Props) {
   const ctx: Ctx = { scenario, allocation };
   const channels = [...scenario.channels].sort(compareChannels);
 
@@ -38,6 +42,9 @@ export default function ChannelBoard({ scenario, allocation, selectedChannelId, 
           if (!o) return null;
           const s = statusLabel(ctx, o);
           const selected = selectedChannelId === ch.id;
+          const live = session.live[ch.id];
+          const handover = activeHandover(session, ch.id);
+          const hp = handover ? phaseLabel(handover.phase) : null;
           return (
             <article
               key={ch.id}
@@ -62,6 +69,16 @@ export default function ChannelBoard({ scenario, allocation, selectedChannelId, 
                   {s.icon} {s.text}
                 </span>
               </header>
+
+              <p className="live-line" title="实际在播路由（只在片段边界变更）">
+                ▸ 在播：{routeText(ctx, live?.route ?? null)}
+                {live && <span className="live-since"> · 自片段 #{live.since}</span>}
+                {hp && handover && (
+                  <span className={`chip chip-mini tone-${hp.tone}`}>
+                    {hp.icon} {hp.text} ⇒ {routeText(ctx, handover.to)}
+                  </span>
+                )}
+              </p>
 
               {o.status === 'ok' && (
                 <div className="ch-body">

@@ -1,5 +1,6 @@
-import type { Allocation, ChannelOutcome, Gap } from '../engine/routing';
+import type { Allocation, ChannelOutcome, Gap, Route } from '../engine/routing';
 import { compareChannels } from '../engine/routing';
+import type { HandoverPhase, TraceEvent, TraceKind } from '../engine/handover';
 import type { Scenario } from '../types';
 
 /** 描述上下文：名称解析都经过它 */
@@ -77,4 +78,73 @@ export function transitionText(ctx: Ctx, channelName: string, o: ChannelOutcome)
   }
   const first = o.gaps[0];
   return `✕ ${channelName} 中断：${first ? gapText(ctx, first) : '无可用路由'}`;
+}
+
+/** 路由的紧凑文案：译员名按跳连接；空路由为"静默" */
+export function routeText(ctx: Ctx, route: Route | null): string {
+  if (!route) return '（静默）';
+  return route.legs.map((l) => interpreterName(ctx, l.interpreterId)).join(' → ');
+}
+
+/** 交接阶段徽标：图标 + 文字 + 色调（不单独依赖颜色） */
+export function phaseLabel(phase: HandoverPhase): { icon: string; text: string; tone: Tone } {
+  switch (phase) {
+    case 'prepare':
+      return { icon: '⏳', text: '准备中', tone: 'info' };
+    case 'switch':
+      return { icon: '⇄', text: '已切换·待确认', tone: 'warn' };
+    case 'rollback':
+      return { icon: '↩', text: '回退中', tone: 'warn' };
+    case 'confirmed':
+      return { icon: '✓', text: '已确认', tone: 'ok' };
+    case 'rolledback':
+      return { icon: '↩', text: '已回退', tone: 'bad' };
+    case 'cancelled':
+      return { icon: '✕', text: '已取消', tone: 'info' };
+  }
+}
+
+const TRACE_TONE: Record<TraceKind, Tone> = {
+  prepare: 'info',
+  switch: 'warn',
+  confirm: 'ok',
+  'rollback-plan': 'warn',
+  rollback: 'bad',
+  cancel: 'info',
+  replace: 'warn',
+  'late-confirm': 'info',
+};
+
+export function traceTone(kind: TraceKind): Tone {
+  return TRACE_TONE[kind];
+}
+
+function channelName(ctx: Ctx, channelId: string): string {
+  return ctx.scenario.channels.find((c) => c.id === channelId)?.name ?? channelId;
+}
+
+/** 交接轨迹事件的可读文案（带频道名与片段号） */
+export function traceText(ctx: Ctx, ev: TraceEvent): string {
+  const ch = channelName(ctx, ev.channelId);
+  const from = routeText(ctx, ev.from);
+  const to = routeText(ctx, ev.to);
+  const note = ev.note ? `（${ev.note}）` : '';
+  switch (ev.kind) {
+    case 'prepare':
+      return `【${ch}】交接发起：${from} ⇒ ${to}${note}`;
+    case 'switch':
+      return ev.to ? `【${ch}】边界切换生效：${to} 接播` : `【${ch}】边界切换生效：频道静默`;
+    case 'confirm':
+      return `【${ch}】新路由已确认${note}`;
+    case 'rollback-plan':
+      return `【${ch}】安排回退${note}`;
+    case 'rollback':
+      return `【${ch}】回退生效${note}`;
+    case 'cancel':
+      return `【${ch}】交接取消${note}`;
+    case 'replace':
+      return `【${ch}】交接被取代${note}`;
+    case 'late-confirm':
+      return `【${ch}】迟到确认已忽略${note}`;
+  }
 }
